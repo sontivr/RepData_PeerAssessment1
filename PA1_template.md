@@ -59,7 +59,7 @@ summary(totalStepsPerDay)
 
 ```r
 # 2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
-hist(totalStepsPerDay$steps, xlab = "Steps per Day", ylab = "Days", main = "Total number of steps taken each day")
+hist(totalStepsPerDay$steps, xlab = "Steps per Day", ylab = "Frequency", main = "Total number of steps taken each day")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -171,7 +171,7 @@ rownames(activity2) <- seq(length=nrow(activity2))                # re-sequence 
 
 # 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 totalStepsPerDay2 <- aggregate(steps ~ date, data = activity2, FUN = "sum")
-hist(totalStepsPerDay2$steps, xlab = "Steps per Day", ylab = "Days", main = "Total number of steps taken each day (Imputed)")
+hist(totalStepsPerDay2$steps, xlab = "Steps per Day", ylab = "Frequency", main = "Total number of steps taken each day (Imputed)")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
