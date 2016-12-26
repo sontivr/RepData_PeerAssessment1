@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-``` {r echo=TRUE}
+
+```r
 # source
 sourceURL<-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 sourceFileCompressed<-"activity.zip"
@@ -28,27 +24,68 @@ activity <- read.csv(sourceFile, sep = ",", heade = TRUE)
 summary(activity)
 ```
 
+```
+##      steps                date          interval     
+##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
+##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
+##  Median :  0.00   2012-10-03:  288   Median :1177.5  
+##  Mean   : 37.38   2012-10-04:  288   Mean   :1177.5  
+##  3rd Qu.: 12.00   2012-10-05:  288   3rd Qu.:1766.2  
+##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
+##  NA's   :2304     (Other)   :15840
+```
+
 
 
 ## What is mean total number of steps taken per day?
-``` {r echo=TRUE}
+
+```r
 # 1. Calculate the total number of steps taken per day
 totalStepsPerDay <- aggregate(steps ~ date, data = activity, FUN = "sum")
 # totalStepsPerDay
 summary(totalStepsPerDay)
+```
 
+```
+##          date        steps      
+##  2012-10-02: 1   Min.   :   41  
+##  2012-10-03: 1   1st Qu.: 8841  
+##  2012-10-04: 1   Median :10765  
+##  2012-10-05: 1   Mean   :10766  
+##  2012-10-06: 1   3rd Qu.:13294  
+##  2012-10-07: 1   Max.   :21194  
+##  (Other)   :47
+```
+
+```r
 # 2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
 hist(totalStepsPerDay$steps, xlab = "Steps per Day", ylab = "Days", main = "Total number of steps taken each day")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 # 3. Calculate and report the mean and median of the total number of steps taken per day
 print(paste0("Mean of the total number of steps taken per day: ", round(mean(totalStepsPerDay$steps))), quote = FALSE)
+```
+
+```
+## [1] Mean of the total number of steps taken per day: 10766
+```
+
+```r
 print(paste0("Median of the total number of steps taken per day: ", median(totalStepsPerDay$steps)), quote = FALSE)
+```
+
+```
+## [1] Median of the total number of steps taken per day: 10765
 ```
 
 
 
 ## What is the average daily activity pattern?
-``` {r}
+
+```r
 meanStepsPerInterval <- aggregate(steps ~ interval, data = activity, FUN = "mean")
 
 # 1. Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -57,18 +94,69 @@ plot(x=meanStepsPerInterval$interval, y=meanStepsPerInterval$steps, type='l', ma
 # 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 maxSteps <- as.integer(subset(meanStepsPerInterval, steps==max(steps))["interval"])
 print(paste0("The 5-min interval with maximum number of steps is: ", maxSteps), quote = FALSE)
+```
+
+```
+## [1] The 5-min interval with maximum number of steps is: 835
+```
+
+```r
 abline(v=maxSteps, col = 10)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 
 ## Imputing missing values
-``` {r echo=TRUE}
+
+```r
 library(plyr)
 library(Hmisc)
+```
 
+```
+## Loading required package: lattice
+```
+
+```
+## Loading required package: survival
+```
+
+```
+## Loading required package: Formula
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```
+## 
+## Attaching package: 'Hmisc'
+```
+
+```
+## The following objects are masked from 'package:plyr':
+## 
+##     is.discrete, summarize
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     format.pval, round.POSIXt, trunc.POSIXt, units
+```
+
+```r
 # 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with 𝙽𝙰s)
 print(paste0("Total number of missing values in the dataset: ", nrow(subset(activity, is.na(steps)==T)["steps"])), quote = FALSE)
+```
 
+```
+## [1] Total number of missing values in the dataset: 2304
+```
+
+```r
 # 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 # using ddply and impute function to replace NAs with mean values. 
 activity2 <- ddply(activity, "interval", mutate, imputed.steps = round(impute(steps, mean)))
@@ -84,10 +172,24 @@ rownames(activity2) <- seq(length=nrow(activity2))                # re-sequence 
 # 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 totalStepsPerDay2 <- aggregate(steps ~ date, data = activity2, FUN = "sum")
 hist(totalStepsPerDay2$steps, xlab = "Steps per Day", ylab = "Days", main = "Total number of steps taken each day (Imputed)")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 print(paste0("Mean of the total number of steps taken per day (with imputed): ", round(mean(totalStepsPerDay2$steps))), quote = FALSE)
-print(paste0("Median of the total number of steps taken per day (with imputed): ", median(totalStepsPerDay2$steps)), quote = FALSE)
+```
 
+```
+## [1] Mean of the total number of steps taken per day (with imputed): 10766
+```
+
+```r
+print(paste0("Median of the total number of steps taken per day (with imputed): ", median(totalStepsPerDay2$steps)), quote = FALSE)
+```
+
+```
+## [1] Median of the total number of steps taken per day (with imputed): 10762
 ```
 
 #### Impact of imputing missing data on the estimates of total daily number of steps:
@@ -97,7 +199,8 @@ print(paste0("Median of the total number of steps taken per day (with imputed): 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-``` {r echo=TRUE}
+
+```r
 library(chron)      # to use is.weekend
 
 # For this part the 𝚠𝚎𝚎𝚔𝚍𝚊𝚢𝚜() function may be of some help here. Use the dataset with the filled-in missing values for this part.
@@ -110,6 +213,7 @@ activity2 <- ddply(activity2, "date", mutate, weekdays = isweekend(date))
 meanStepsPerInterval2 <- aggregate(steps ~ interval + weekdays, data = activity2, FUN = "mean")
 library(ggplot2)
 ggplot(meanStepsPerInterval2, aes(x=interval, y=steps)) + geom_line() + facet_wrap(~weekdays, nrow=2)
-             
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
